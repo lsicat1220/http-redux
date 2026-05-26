@@ -4,16 +4,19 @@
 #include <stdlib.h>
 #include "../include/slice.h"
 
+typedef struct MapNode {
+	Slice *key;
+	Slice *value;
+} MapNode;
+
 typedef struct {
-	void* key;
-	void* value;
-	size_t key_size;
-	size_t value_size;
-} mapNode;
+	MapNode *list;	
+	int len;
+} MapState;
 
 unsigned int Hash(Slice *input);
 
-int MapSet(mapNode** map, size_t map_size, mapNode* node);
+int MapSet(MapNode** map, size_t map_size, MapNode* node);
 
-mapNode* MapGet(mapNode** map, size_t map_size, void* key, size_t key_size);
+MapNode* MapGet(MapNode** map, size_t map_size, void* key, size_t key_size);
 #endif
