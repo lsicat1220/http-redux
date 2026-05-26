@@ -21,7 +21,7 @@ int main() {
 	//generating random array of characters
 	char block[BLOCK_SIZE];
 	for (int i = 0; i < BLOCK_SIZE; i++) {
-		block[i] = rand() % 128;
+		block[i] = rand() % 96 + 32;
 	}
 
 	//setting map
