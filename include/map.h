@@ -18,5 +18,5 @@ unsigned int Hash(Slice *input);
 
 int MapSet(Slice *key, Slice *value, MapState *state);
 
-MapNode* MapGet(MapNode** map, size_t map_size, void* key, size_t key_size);
+Slice* MapGet(MapState* map, Slice* key);
 #endif

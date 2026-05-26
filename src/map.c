@@ -27,7 +27,7 @@ int MapSet(Slice* key, Slice* value, MapState* state) {
 		} 
 		cursor = (cursor + 1) % map_size;
 		if (initial_index == cursor) {
-			fprintf(stderr, "ERROR: Map is full\n");
+			fprintf(stderr, "ERROR: No index found on map\n");
 			return -1;
 		}
 	}
@@ -36,15 +36,17 @@ int MapSet(Slice* key, Slice* value, MapState* state) {
 	return 0;
 }
 
-mapNode* MapGet(mapNode** map, size_t map_size, void* key, size_t key_size) {
-	unsigned int index = Hash(key, key_size) % map_size;
-	unsigned int initial_index = index;
-	while (map[index] != NULL) {
-		if (map[index]->key_size == key_size && !memcmp(map[index]->key, key, key_size)) {
-			return map[index];
+Slice* MapGet(MapState* state, Slice *key) {
+	unsigned int cursor = Hash(key) % state->len;
+	unsigned int initial_index = cursor;
+	MapNode* list = state->list;
+	while (list[cursor].key != NULL) {
+		Slice* current_key = list[cursor].key;
+		if (current_key->len == key->len && !memcmp(current_key->start, key->start, key->len)) {
+			return list[cursor].value;
 		}
-		index = (index + 1) % map_size;
-		if (index == initial_index) {
+		cursor = (cursor + 1) % state->len;
+		if (cursor == initial_index) {
 			break;
 		}
 	}
