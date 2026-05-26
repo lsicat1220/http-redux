@@ -8,7 +8,7 @@
 
 #define BLOCK_SIZE 1024
 #define NUM_NODES 64
-#define NUM_SLICES 20
+#define NUM_SLICES 64 
 #define NUM_TRIALS 5
 
 int main() {
@@ -37,7 +37,9 @@ int main() {
 		sprintf(val, "This is value %d\n", i);
 		values[i].start = val;
 		values[i].len = strlen(values[i].start);
-		MapSet(&keys[i], &values[i], &map);
+		if (MapSet(&keys[i], &values[i], &map) == -1) {
+			fprintf(stderr, "ERROR: Not enough map space%d\n", i);
+		}
 	}
 
 	//getting random values
@@ -57,6 +59,15 @@ int main() {
 		}
 		printf("\n\n");
 	}
+
+	Slice invalid_slice = {"No", 2};
+	if (MapGet(&map, &invalid_slice) == NULL) {
+		printf("Invalid trial: pass\n");
+	} else {
+		printf("Invalid trial: fail\n");
+	}
+
+	//clean up
 	for (int i = 0; i < NUM_SLICES; i++) {
 		free(values[i].start);
 	}
