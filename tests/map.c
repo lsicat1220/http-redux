@@ -29,7 +29,7 @@ int main() {
 	char* val;
 	int len;
 	for (int i = 0; i < NUM_SLICES; i++) {
-		len = rand() % 20;	
+		len = rand() % 20 + 1;	
 		val = malloc(32);	
 		keys[i].start = &block[cursor];
 		keys[i].len = len;
@@ -49,9 +49,15 @@ int main() {
 		fwrite(keys[target_index].start, sizeof(char), keys[target_index].len, stdout);
 		printf("\n");
 		result = MapGet(&map, &keys[target_index]);
-		printf("Result: ");
-		fwrite(result->start, sizeof(char), result->len, stdout);
+		if (result != NULL) {
+			printf("Result: ");
+			fwrite(result->start, sizeof(char), result->len, stdout);
+		} else {
+			fprintf(stderr, "ERROR: Key not found\n");
+		}
 		printf("\n\n");
 	}
-
+	for (int i = 0; i < NUM_SLICES; i++) {
+		free(values[i].start);
+	}
 }
