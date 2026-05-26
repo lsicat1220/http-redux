@@ -2,14 +2,14 @@
 #include <stdio.h>
 #include <string.h>
 #include "../include/map.h"
+#include "../include/slice.h"
 
-unsigned int Hash(void* input, size_t size) {
+unsigned int Hash(Slice *input) {
 	const unsigned int FNV_prime = 0x01000193;
 	const unsigned int FNV_offset_basis = 0x811c9dc5;
 	unsigned int hash = FNV_offset_basis;
-	unsigned char* data = input;
-	for (int i = 0; i < size; i++) {
-		hash ^= data[i];
+	for (int i = 0; i < input->len; i++) {
+		hash ^= input->start[i];
 		hash *= FNV_prime;
 	}	
 	return hash;

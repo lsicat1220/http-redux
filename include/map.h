@@ -1,6 +1,9 @@
-#include <stdlib.h>
 #ifndef MAP_H
 #define MAP_H
+
+#include <stdlib.h>
+#include "../include/slice.h"
+
 typedef struct {
 	void* key;
 	void* value;
@@ -8,7 +11,7 @@ typedef struct {
 	size_t value_size;
 } mapNode;
 
-unsigned int Hash(void* input, size_t size);
+unsigned int Hash(Slice *input);
 
 int MapSet(mapNode** map, size_t map_size, mapNode* node);
 
