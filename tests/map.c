@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <time.h>
 
-#define BLOCK_SIZE 1024
+#define BLOCK_SIZE 2048
 #define NUM_NODES 64
 #define NUM_SLICES 64 
 #define NUM_TRIALS 500
@@ -86,7 +86,27 @@ int iteration() {
 		return -1;
 	} 
 
+	//overwrite test
+	Slice* overwritten_key = &keys[0];
+	char* new_val_str = malloc(32);
+	if (!new_val_str) {
+		fprintf(stderr, "ERROR: Malloc failure\n");
+		return -2;
+	}
+	sprintf(new_val_str, "Overwrite\n");
+	Slice new_val = {new_val_str, strlen(new_val_str)};
+	if (MapSet(overwritten_key, &new_val, &map) == -1) {
+		fprintf(stderr, "ERROR: Overwrite failed\n");
+		return -1;
+	}
+	Slice* overwrite_result = MapGet(&map, overwritten_key);
+	if (overwrite_result == NULL || overwrite_result != &new_val) {
+		fprintf(stderr, "ERROR: Overwrite retrieval failed\n");
+		return -1;
+	}
+
 	//clean up
+	free(new_val_str);
 	for (int i = 0; i < NUM_SLICES; i++) {
 		free(values[i].start);
 	}
