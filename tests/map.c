@@ -3,16 +3,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
+#include <assert.h>
 #include <time.h>
 
 #define BLOCK_SIZE 1024
 #define NUM_NODES 64
 #define NUM_SLICES 64 
-#define NUM_TRIALS 5
+#define NUM_TRIALS 500
+#define NUM_ITERATIONS 50
+
+int iteration();
 
 int main() {
 	srand(time(NULL));
+	for (int i = 0; i < NUM_ITERATIONS; i++) {
+		if (iteration() < 0) {
+			printf("Failure on iteration %d\n", i);
+			return -1;
+		}
+	}
+	printf("All iterations pass\n");
+}
+
+int iteration() {
 	MapNode list[NUM_NODES] = {0};
 	Slice keys[NUM_SLICES] = {0};
 	Slice values[NUM_SLICES];
@@ -29,8 +42,12 @@ int main() {
 	char* val;
 	int len;
 	for (int i = 0; i < NUM_SLICES; i++) {
-		len = rand() % 20 + 1;	
+		len = rand() % 10 + 10;	
 		val = malloc(32);	
+		if (!val) {
+			fprintf(stderr, "ERROR: Malloc failure\n");
+			return -2;
+		}
 		keys[i].start = &block[cursor];
 		keys[i].len = len;
 		cursor += len;	
@@ -39,6 +56,7 @@ int main() {
 		values[i].len = strlen(values[i].start);
 		if (MapSet(&keys[i], &values[i], &map) == -1) {
 			fprintf(stderr, "ERROR: Not enough map space%d\n", i);
+			return -1;
 		}
 	}
 
@@ -47,28 +65,30 @@ int main() {
 	Slice* result;
 	for (int i = 0; i < NUM_TRIALS; i++) {
 		target_index = rand() % NUM_SLICES;
-		printf("Trial %d, index %d: ", i, target_index);
-		fwrite(keys[target_index].start, sizeof(char), keys[target_index].len, stdout);
-		printf("\n");
 		result = MapGet(&map, &keys[target_index]);
-		if (result != NULL) {
+		if (result != &values[target_index] && result != NULL) {
+			fprintf(stderr, "ERROR: Value mismatch\n");
+			printf("Trial %d, index %d: ", i, target_index);
+			fwrite(keys[target_index].start, sizeof(char), keys[target_index].len, stdout);
+			printf("\n");
 			printf("Result: ");
 			fwrite(result->start, sizeof(char), result->len, stdout);
-		} else {
+			return -1;
+		} else if (result == NULL) {
 			fprintf(stderr, "ERROR: Key not found\n");
+			return -1;
 		}
-		printf("\n\n");
 	}
 
 	Slice invalid_slice = {"No", 2};
-	if (MapGet(&map, &invalid_slice) == NULL) {
-		printf("Invalid trial: pass\n");
-	} else {
-		printf("Invalid trial: fail\n");
-	}
+	if (MapGet(&map, &invalid_slice) != NULL) {
+		fprintf(stderr, "ERROR: Nonexistent key gives result\n");
+		return -1;
+	} 
 
 	//clean up
 	for (int i = 0; i < NUM_SLICES; i++) {
 		free(values[i].start);
 	}
+	return 0;
 }
