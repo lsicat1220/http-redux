@@ -4,7 +4,7 @@
 #include "../include/map.h"
 #include "../include/slice.h"
 
-unsigned int Hash(Slice *input) {
+unsigned int Hash(Slice* input) {
 	const unsigned int FNV_prime = 0x01000193;
 	const unsigned int FNV_offset_basis = 0x811c9dc5;
 	unsigned int hash = FNV_offset_basis;
@@ -15,22 +15,24 @@ unsigned int Hash(Slice *input) {
 	return hash;
 }
 
-int MapSet(mapNode** map, size_t map_size, mapNode* node) {
-	unsigned int index = Hash(node->key, node->key_size) % map_size;
-	unsigned int initial_index = index;
-	unsigned int next_index;
-	while (map[index]) {
-		next_index = (index + 1) % map_size;
-		if (next_index == initial_index) {
-			fprintf(stderr, "ERROR: Unable to find free index in map\n");
+int MapSet(Slice* key, Slice* value, MapState* state) {
+	int map_size = state->len;
+	unsigned int cursor = Hash(key) % map_size;
+	unsigned int initial_index = cursor;
+	MapNode* list = state->list;
+	while (list[cursor].key) {
+		Slice* current_key = list[cursor].key;
+		if (current_key->len == key->len && !memcmp(current_key->start, key->start, key->len)) {
+			break;
+		} 
+		cursor = (cursor + 1) % map_size;
+		if (initial_index == cursor) {
+			fprintf(stderr, "ERROR: Map is full\n");
 			return -1;
 		}
-		if (map[index]->key_size == node->key_size && !memcmp(map[index]->key, node->key, node->key_size)) {
-			break;
-		}
-		index = next_index;
 	}
-	map[index] = node;
+	list[cursor].key = key;
+	list[cursor].value = value;
 	return 0;
 }
 
