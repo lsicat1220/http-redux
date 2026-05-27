@@ -6,11 +6,11 @@
 int ParseHeader(MapState* map, Slice* header) {
 	Slice components[2];
 	if (SplitSlice(header, components, 2, ": ", 2) != 2) {
-		fprintf(stderr, "ERROR: Invalid header format");
+		fprintf(stderr, "ERROR: Invalid header format\n");
 		return -1;
 	}
 	if (MapSet(&components[0], &components[1], map) != 0) {
-		fprintf(stderr, "ERROR: Map set failed");
+		fprintf(stderr, "ERROR: Map set failed\n");
 		return -1;
 	} else {
 		return 0;
