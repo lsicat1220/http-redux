@@ -74,3 +74,9 @@ int SliceToString(Slice* input, char* str, int str_len) {
 	str[input->len] = 0;
 	return 0;
 }
+
+// meant for testing purposes, use null-terminated string
+void StrToSlice(char* input, Slice *output) {
+	output->start = input;
+	output->len = strlen(input);
+}

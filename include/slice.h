@@ -17,4 +17,6 @@ void TrimSlice(Slice* input);
 
 int SliceToStr(Slice* input, char* str, int str_len);
 
+void StrToSlice(char* input, Slice* output);
+
 #endif
