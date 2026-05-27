@@ -1,19 +1,6 @@
 #include <stdlib.h>
 #ifndef RECEIVE_H
 #define RECEIVE_H 
-enum contentType {
-	HTML,
-	CSS,
-	JS,
-	TXT,
-	JSON,
-	ICO,
-	UNSUPPORTED,
-};
-enum methods {
-	GET,
-	POST,
-};
 enum receiveStatus {
 	ERR_SOCKET_FAILED = -1,
 	ERR_READ_INTERRUPTED = -2,
