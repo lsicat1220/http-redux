@@ -47,3 +47,21 @@ int ParseVersion(Slice* version) {
 	return -1;
 }
 
+int ParseRequestLine(RequestLine* req, Slice* line) {
+	Slice components[3];
+	if (SplitSlice(line, components, 3, " ", 2) != 3) {
+		fprintf(stderr, "ERROR: Invalid request line format");
+		return -1;
+	}
+	req->method = ParseMethod(&components[0]);
+	if (SliceToStr(&components[1], req->path, 128) != 0) {
+		return -1;
+	}	
+	int version = ParseVersion(&components[2]);
+	if (version < 0) {
+		return -1;
+	} else {
+		req->version = version;
+	}
+	return 0;
+}

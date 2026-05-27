@@ -25,6 +25,6 @@ typedef struct {
 
 int ParseHeader(MapState* map, Slice* header);
 
-	
+int ParseRequestLine(RequestLine* req, Slice* line);	
 
 #endif
