@@ -32,15 +32,15 @@ int ParseMethod(Slice* method) {
 }
 
 int ParseVersion(Slice* version) {
-	if (version->len != 3) {
+	if (memcmp(version->start, "HTTP", 4) != 0 || version->len != 8) {
 		fprintf(stderr, "ERROR: Invalid version format\n");
 		return -1;
 	}
-	if (version->start[0] == '2') {
+	if (version->start[6] == '2') {
 		return 2;
-	} else if (version->start[3] == '0') {
+	} else if (version->start[8] == '0') {
 		return 0;
-	} else if (version->start[3] == '1') {
+	} else if (version->start[8] == '1') {
 		return 1;
 	}
 	fprintf(stderr, "ERROR: Invalid version\n");
