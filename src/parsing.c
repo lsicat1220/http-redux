@@ -31,3 +31,19 @@ int ParseMethod(Slice* method) {
 	return UNSUPPORTED;
 }
 
+int ParseVersion(Slice* version) {
+	if (version->len != 3) {
+		fprintf(stderr, "ERROR: Invalid version format\n");
+		return -1;
+	}
+	if (version->start[0] == '2') {
+		return 2;
+	} else if (version->start[3] == '0') {
+		return 0;
+	} else if (version->start[3] == '1') {
+		return 1;
+	}
+	fprintf(stderr, "ERROR: Invalid version\n");
+	return -1;
+}
+
