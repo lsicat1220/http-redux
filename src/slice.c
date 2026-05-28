@@ -32,12 +32,14 @@ int SplitSlice(Slice* input, Slice* outputs, int num_outputs, char* delim, size_
 	int remaining_bytes = input->len;
 	while (remaining_bytes > 0 && occurences < num_outputs) {
 		next_delim = TheMemmem(delim, cursor, delim_len, remaining_bytes);
-		if (!next_delim || occurences == num_outputs - 1) {
+		// If there are no more delimiters found, the last slice uses the rest of the bytes
+		if (!next_delim) {
 			len = remaining_bytes;	
+			remaining_bytes = 0;
 		} else {
 			len = next_delim - cursor;
+			remaining_bytes -= len + delim_len;
 		}
-		remaining_bytes -= len + delim_len;
 		outputs[occurences].start = cursor;
 		outputs[occurences].len = len;
 		occurences++;
