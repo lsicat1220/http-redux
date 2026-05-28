@@ -30,9 +30,10 @@ int SplitSlice(Slice* input, Slice* outputs, int num_outputs, char* delim, size_
 	char* cursor = input->start;
 	int len = 0;
 	int remaining_bytes = input->len;
-	while (remaining_bytes > 0 && occurences < num_outputs) {
+	while (remaining_bytes > 0) {
 		next_delim = TheMemmem(delim, cursor, delim_len, remaining_bytes);
-		// If there are no more delimiters found, the last slice uses the rest of the bytes
+		// If there are no more delimiters found, the last slice uses the rest of the bytes. 
+		// delim_len is only used if a delimiter is found
 		if (!next_delim) {
 			len = remaining_bytes;	
 			remaining_bytes = 0;
@@ -40,10 +41,17 @@ int SplitSlice(Slice* input, Slice* outputs, int num_outputs, char* delim, size_
 			len = next_delim - cursor;
 			remaining_bytes -= len + delim_len;
 		}
-		outputs[occurences].start = cursor;
-		outputs[occurences].len = len;
+		// outputs array only gets updated until it is filled
+		// occurrences needs to update even if the array is full to effectively enforce certain formats
+		if (occurences < num_outputs) {
+			outputs[occurences].start = cursor;
+			outputs[occurences].len = len;
+		}
 		occurences++;
-		cursor = next_delim + delim_len;
+		// We have to make sure delim_len isn't used in this calculation because there isn't always a delimiter
+		// We also can't jump to the next delimiter because it could be NULL
+		// remaining_bytes always has a safe number since its value is conditional depending on if next_delim is NULL
+		cursor = input->start + (input->len - remaining_bytes);
 	}
 	return occurences;
 }
