@@ -23,7 +23,7 @@ int GetSlice(bufState* buf_state, Slice* slice, const char* delim, const int del
 	buf_state->offset += slice_len + delim_len;
 	return 0;
 }
-
+// TODO: Figure out a way to increment occurences after every output slot has been filled without segfaulting
 int SplitSlice(Slice* input, Slice* outputs, int num_outputs, char* delim, size_t delim_len) {
 	int occurences = 0;
 	char* next_delim = NULL;
