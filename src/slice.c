@@ -43,9 +43,6 @@ int SplitSlice(Slice* input, Slice* outputs, int num_outputs, char* delim, size_
 		occurences++;
 		cursor = next_delim + delim_len;
 	}
-	while (TheMemmem(delim, cursor, delim_len, remaining_bytes)) {
-		occurences++;
-	}
 	return occurences;
 }
 // 0 1 2 3 4 5 6 7 8 9
