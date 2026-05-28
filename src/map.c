@@ -15,11 +15,11 @@ unsigned int Hash(Slice* input) {
 	return hash;
 }
 
-int MapSet(Slice* key, Slice* value, MapState* state) {
-	int map_size = state->len;
+int MapSet(Slice* key, Slice* value, MapState* map) {
+	int map_size = map->len;
 	unsigned int cursor = Hash(key) % map_size;
 	unsigned int initial_index = cursor;
-	MapNode* list = state->list;
+	MapNode* list = map->list;
 	while (list[cursor].key) {
 		Slice* current_key = list[cursor].key;
 		if (current_key->len == key->len && !memcmp(current_key->start, key->start, key->len)) {
@@ -36,16 +36,16 @@ int MapSet(Slice* key, Slice* value, MapState* state) {
 	return 0;
 }
 
-Slice* MapGet(MapState* state, Slice *key) {
-	unsigned int cursor = Hash(key) % state->len;
+Slice* MapGet(MapState* map, Slice *key) {
+	unsigned int cursor = Hash(key) % map->len;
 	unsigned int initial_index = cursor;
-	MapNode* list = state->list;
+	MapNode* list = map->list;
 	while (list[cursor].key != NULL) {
 		Slice* current_key = list[cursor].key;
 		if (current_key->len == key->len && !memcmp(current_key->start, key->start, key->len)) {
 			return list[cursor].value;
 		}
-		cursor = (cursor + 1) % state->len;
+		cursor = (cursor + 1) % map->len;
 		if (cursor == initial_index) {
 			break;
 		}

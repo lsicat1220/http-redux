@@ -16,7 +16,7 @@ typedef struct {
 
 unsigned int Hash(Slice *input);
 
-int MapSet(Slice *key, Slice *value, MapState *state);
+int MapSet(Slice *key, Slice *value, MapState *map);
 
-Slice* MapGet(MapState* state, Slice* key);
+Slice* MapGet(MapState* map, Slice* key);
 #endif
