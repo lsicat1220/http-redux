@@ -49,8 +49,9 @@ int ParseVersion(Slice* version) {
 
 int ParseRequestLine(RequestLine* req, Slice* line) {
 	Slice components[3];
-	if (SplitSlice(line, components, 3, " ", 2) != 3) {
-		fprintf(stderr, "ERROR: Invalid request line format");
+	int num_slices = SplitSlice(line, components, 3, " ", 1);
+	if (num_slices != 3) {
+		fprintf(stderr, "ERROR: Invalid request line format: number of slices = %d\n", num_slices);
 		return -1;
 	}
 	req->method = ParseMethod(&components[0]);
