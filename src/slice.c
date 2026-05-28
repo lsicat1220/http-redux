@@ -62,7 +62,7 @@ void TrimSlice(Slice* input) {
 
 }
 
-int SliceToString(Slice* input, char* str, int str_len) {
+int SliceToStr(Slice* input, char* str, int str_len) {
 	if (str_len <= input->len) {
 		fprintf(stderr, "ERROR: String size too large for given slice\n");
 		return -1;
