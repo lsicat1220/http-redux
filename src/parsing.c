@@ -36,11 +36,11 @@ int ParseVersion(Slice* version) {
 		fprintf(stderr, "ERROR: Invalid version format\n");
 		return -1;
 	}
-	if (version->start[6] == '2') {
+	if (version->start[5] == '2') {
 		return 2;
-	} else if (version->start[8] == '0') {
+	} else if (version->start[7] == '0') {
 		return 0;
-	} else if (version->start[8] == '1') {
+	} else if (version->start[7] == '1') {
 		return 1;
 	}
 	fprintf(stderr, "ERROR: Invalid version\n");
