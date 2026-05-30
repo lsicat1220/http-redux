@@ -68,4 +68,5 @@ int ParseRequestLine(RequestLine* req, Slice* line) {
 }
 
 // TODO: Create function for separating headers in buffer, then mapping each line
-
+// ALSO TODO: Figure out the actual pipeline for processing the buffer
+// GetSlice could be used, also needs renaming

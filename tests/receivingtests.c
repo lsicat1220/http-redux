@@ -85,10 +85,10 @@ int main() {
 			printf("Read success!\n");
 		}
 		printf("Full buffer {\n");
-		fwrite(buffer, 1, bufstate.used, stdout);
+		fwrite(buffer, 1, bufstate.used_bytes, stdout);
 		printf("\n}\n");
 		printf("Data after next_start {\n");
-		fwrite(buffer + bufstate.offset, 1, bufstate.used - bufstate.offset, stdout);
+		fwrite(buffer + bufstate.unprocessed_offset, 1, bufstate.used_bytes - bufstate.unprocessed_offset, stdout);
 		printf("\n}\n");
 		memset(buffer, 0, 8192);
 	}

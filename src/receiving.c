@@ -12,46 +12,34 @@
 // This function edits a buf_state struct, which includes the buffer itself,
 // the total amount of the bytes read, and the length of the most recent section received.
 
-// next_start refers to amount of bytes from the start of the buffer the 
-// next call of this function should start at.
 int ReadUntil(int fd, bufState* buf_state, char* target, int target_size) {
-	int newRead;
-	int offset;
-	int status = 0;
-	char* buffer = buf_state->buffer;
-	int* used = &(buf_state->used);
+	char* buffer_start = buf_state->buffer;
+	int* used_bytes = &(buf_state->used_bytes);
 	const size_t capacity = buf_state->capacity;
-	char* pos = buffer + buf_state->offset;
-	char* occurrence = TheMemmem(target, pos, target_size, *used - (pos - buffer));
-	while (!occurrence && *used < capacity) {
-		newRead = read(fd, buffer + *used, capacity - *used);
-		if (newRead < 0) {
-			status = ERR_SOCKET_FAILED; //read failed
-			break;
-		} else if (newRead == 0) {
-			if (*used) {
-				status = ERR_READ_INTERRUPTED; //read interrupted or ended prematurely
-			} else {
-				status = ERR_NO_DATA; //read ended with no data
-			}
-			break;
+	char* search_start = buffer_start + buf_state->unprocessed_offset;
+	char* occurrence = TheMemmem(target, search_start, target_size, *used_bytes - (search_start - buffer_start));
+
+	while (!occurrence && *used_bytes < capacity) {
+		int newly_read_bytes = read(fd, buffer_start + *used_bytes, capacity - *used_bytes);
+
+		if (newly_read_bytes < 0) {
+			return ERR_SOCKET_FAILED; 
+		} 
+		if (newly_read_bytes == 0) {
+			return *used_bytes ? ERR_READ_INTERRUPTED : ERR_NO_DATA;
 		}
-		*used += newRead;
-		if (pos - buffer < target_size - 1) {
-			offset = pos - buffer;
-		} else {
-			offset = target_size - 1;
-		}
-		occurrence = TheMemmem(target, pos - offset, target_size, newRead + offset);
-		pos = buffer + *used;
+
+		*used_bytes += newly_read_bytes;
+
+		// Start reading a few bytes back to catch cases where the target is cut off between reads
+		int memmem_offset = target_size - 1;
+		if (search_start - buffer_start < target_size - 1) {
+			memmem_offset = search_start - buffer_start;
+		} 		
+		occurrence = TheMemmem(target, search_start - memmem_offset, target_size, newly_read_bytes + memmem_offset);
+		search_start = buffer_start + *used_bytes;
 	} 
-#ifdef DEBUG
-	printf("Data read:\n%s\n", (char*) buffer);
-#endif
-	if (status == 0 && !occurrence) {
-		status = ERR_BUFFER_FULL; //ran out of space, no headers
-	}	
-	return status;  
+	return (!occurrence) ? ERR_BUFFER_FULL : 0;
 }
 
 void HandleReadError(enum receiveStatus status) {
@@ -71,7 +59,7 @@ void HandleReadError(enum receiveStatus status) {
 
 // This is a simple function that takes data stored in bufState to move the most recent section to a new string
 int MoveSection(bufState* bufState, void* dest, size_t dest_len) {
-	int sectionLen = bufState->offset - 1;
+	int sectionLen = bufState->unprocessed_offset - 1;
 	if (sectionLen > dest_len) {
 		fputs("ERROR: Attempt to move data to a smaller buffer", stderr);
 		return 0;
@@ -83,10 +71,10 @@ int MoveSection(bufState* bufState, void* dest, size_t dest_len) {
 // This function shifts the buffer such that the beginning of the buffer is now 
 // the position refered to by bufState.offset
 int CompactBuffer(bufState* buf) {
-	int len = buf->used -= buf->offset;
-	memmove(buf->buffer, buf->buffer + buf->offset, len);
-	buf->used = len;
-	buf->offset = 0;	
+	int len = buf->used_bytes -= buf->unprocessed_offset;
+	memmove(buf->buffer, buf->buffer + buf->unprocessed_offset, len);
+	buf->used_bytes = len;
+	buf->unprocessed_offset = 0;	
 	memset(buf->buffer + len, 0, buf->capacity - len);
 	return 0;
 }

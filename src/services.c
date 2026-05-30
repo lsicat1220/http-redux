@@ -25,7 +25,7 @@ void HandleConnection(int clientSocket) {
 		printf("Headers: \n");
 		fwrite(request.start, request.len, sizeof(char), stdout);
 		printf("\n\nThe Rest:\n");
-		fwrite(buffer_state.buffer + buffer_state.offset, BUFFER_SIZE - buffer_state.offset, sizeof(char), stdout);
+		fwrite(buffer_state.buffer + buffer_state.unprocessed_offset, BUFFER_SIZE - buffer_state.unprocessed_offset, sizeof(char), stdout);
 		keepAlive = 0;
 	}
 	snprintf(responseBuffer, BUFFER_SIZE, "HTTP/1.0 200 OK\r\n\r\n");

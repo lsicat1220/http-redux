@@ -10,8 +10,8 @@ void InitSlice(Slice* new_slice, char* input) {
 }
 
 int GetSlice(bufState* buf_state, Slice* slice, const char* delim, const int delim_len) {
-	char* start = buf_state->buffer + buf_state->offset;
-	int max_len = buf_state->capacity - buf_state->offset;
+	char* start = buf_state->buffer + buf_state->unprocessed_offset;
+	int max_len = buf_state->capacity - buf_state->unprocessed_offset;
 	char* slice_end = TheMemmem(delim, start, delim_len, max_len);
 	if (!slice_end) {
 		fprintf(stderr, "ERROR: No delimiter found when creating slice\n");
@@ -20,10 +20,9 @@ int GetSlice(bufState* buf_state, Slice* slice, const char* delim, const int del
 	int slice_len = slice_end - start;
 	slice->start = start;
 	slice->len = slice_len;
-	buf_state->offset += slice_len + delim_len;
+	buf_state->unprocessed_offset += slice_len + delim_len;
 	return 0;
 }
-// TODO: Figure out a way to increment occurences after every output slot has been filled without segfaulting
 int SplitSlice(Slice* input, Slice* outputs, int num_outputs, char* delim, size_t delim_len) {
 	int occurences = 0;
 	char* next_delim = NULL;

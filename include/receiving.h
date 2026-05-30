@@ -10,8 +10,8 @@ enum receiveStatus {
 typedef struct bufState {
 	char* buffer;
 	const size_t capacity;
-	int used;
-	int offset;
+	int used_bytes;
+	int unprocessed_offset;
 } bufState;
 
 int ReadUntil(int fd, bufState* buf_state, char* target, int target_size);
