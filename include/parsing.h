@@ -23,7 +23,8 @@ typedef struct {
 	char path[128];
 } RequestLine;
 
-int ParseHeader(MapState* map, Slice* header);
+
+int ParseHeaders(bufState* buf, MapState* map);
 
 int ParseRequestLine(RequestLine* req, Slice* line);	
 

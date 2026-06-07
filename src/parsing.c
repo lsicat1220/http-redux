@@ -4,16 +4,28 @@
 #include <string.h>
 #include <stdio.h>
 
-int ParseHeader(MapState* map, Slice* header) {
-	Slice components[2];
-	if (SplitSlice(header, components, 2, ": ", 2) != 2) {
-		fprintf(stderr, "ERROR: Invalid header format\n");
-		return -1;
-	}
-	if (MapSet(&components[0], &components[1], map) != 0) {
-		fprintf(stderr, "ERROR: Map set failed\n");
-		return -1;
-	} 
+int ParseHeaders(bufState* buf, MapState* map) {
+	Slice currSlice = {
+		.start = buf->buffer + buf->unprocessed_offset,
+		.len = buf->used_bytes - buf->unprocessed_offset
+	};
+	Slice segments[2];
+	int status;
+	while ((status = TokenizeSlice(buf, &currSlice, "\r\n", 2)) < 2) {
+		if (currSlice.len == 0) {
+			break;
+		}
+		if (SplitSlice(&currSlice, segments, 2, ":", 1) < 0) {
+			fprintf(stderr, "ERROR: Splitting slice failed\n");
+			return -1;
+		}
+		TrimSlice(&segments[0]);
+		TrimSlice(&segments[1]);
+		if (MapSet(&segments[0], &segments[1], map)) {
+			fprintf(stderr, "ERROR: Setting to map failed\n");
+			return -1;
+		}
+	}	
 	return 0;
 }
 
