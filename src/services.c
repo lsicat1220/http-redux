@@ -3,6 +3,8 @@
 #include "../include/receiving.h"
 #include "../include/services.h"
 #include "../include/slice.h"
+#include "../include/map.h"
+#include "../include/parsing.h"
 #define BUFFER_SIZE 8192
 
 void HandleConnection(int clientSocket) {
@@ -12,6 +14,9 @@ void HandleConnection(int clientSocket) {
 	char responseBuffer[BUFFER_SIZE];
 	while (keepAlive) {
 		bufState buffer_state = {readBuffer, BUFFER_SIZE, 0, 0};
+		MapNode list[128];
+		MapState map = {.list = list, .len = 128};
+		RequestLine req;
 		Slice request;
 		int readStatus = ReadUntil(clientSocket, &buffer_state, "\r\n\r\n", 4);
 		if (readStatus < 0) {
@@ -19,13 +24,15 @@ void HandleConnection(int clientSocket) {
 			break;
 		}
 		// by now the buffer should have all of the headers
-		if (GetSlice(&buffer_state, &request, "\r\n", 2)) {
+		if (TokenizeSlice(&buffer_state, &request, "\r\n", 2)) {
 			break;
 		}
-		printf("Headers: \n");
+		if (ParseRequestLine(&req, &request)) {
+			break;
+		};	
+		printf("Request: \n");
 		fwrite(request.start, request.len, sizeof(char), stdout);
-		printf("\n\nThe Rest:\n");
-		fwrite(buffer_state.buffer + buffer_state.unprocessed_offset, BUFFER_SIZE - buffer_state.unprocessed_offset, sizeof(char), stdout);
+		
 		keepAlive = 0;
 	}
 	snprintf(responseBuffer, BUFFER_SIZE, "HTTP/1.0 200 OK\r\n\r\n");
@@ -35,4 +42,16 @@ void HandleConnection(int clientSocket) {
 	snprintf(responseBuffer, BUFFER_SIZE, "HTTP/1.0 200 OK\r\n\r\n");
 	write(clientSocket, responseBuffer, 19);
 	close(clientSocket);
+}
+
+int ParseAllHeaders(bufState* buf, MapState* map) {
+	Slice currSlice;
+	if (TokenizeSlice(buf, &currSlice, "\r\n", 2)) {
+		fprintf(stderr, "ERROR: Creating slice failed");
+		return -1;
+	}
+	while (currSlice.len != 0) {
+
+	}	
+	return 0;
 }
