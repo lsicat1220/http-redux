@@ -13,9 +13,8 @@ int ParseHeader(MapState* map, Slice* header) {
 	if (MapSet(&components[0], &components[1], map) != 0) {
 		fprintf(stderr, "ERROR: Map set failed\n");
 		return -1;
-	} else {
-		return 0;
-	}
+	} 
+	return 0;
 }
 
 int ParseMethod(Slice* method) {
