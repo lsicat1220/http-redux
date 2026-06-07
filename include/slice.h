@@ -8,7 +8,7 @@ typedef struct {
 
 void InitSlice(Slice* new_slice, char* input);
 
-int GetSlice(bufState* buf_state, Slice* slice, const char* delim, const int delim_len);
+int TokenizeSlice(bufState* buf_state, Slice* slice, const char* delim, const int delim_len);
 
 
 int SplitSlice(Slice* input, Slice* outputs, int num_outputs, char* delim, size_t delim_len);
