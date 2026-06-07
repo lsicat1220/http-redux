@@ -44,14 +44,3 @@ void HandleConnection(int clientSocket) {
 	close(clientSocket);
 }
 
-int ParseAllHeaders(bufState* buf, MapState* map) {
-	Slice currSlice;
-	if (TokenizeSlice(buf, &currSlice, "\r\n", 2)) {
-		fprintf(stderr, "ERROR: Creating slice failed");
-		return -1;
-	}
-	while (currSlice.len != 0) {
-
-	}	
-	return 0;
-}
