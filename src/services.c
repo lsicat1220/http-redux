@@ -32,7 +32,12 @@ void HandleConnection(int clientSocket) {
 		};	
 		printf("Request: \n");
 		fwrite(request.start, request.len, sizeof(char), stdout);
-		
+		printf("\n");
+		printf("The rest:\n");
+		fwrite(buffer_state.buffer + buffer_state.unprocessed_offset, buffer_state.used_bytes - buffer_state.unprocessed_offset, 1, stdout);
+		if (ParseHeaders(&buffer_state, &map)) {
+			break;
+		}
 		keepAlive = 0;
 	}
 	snprintf(responseBuffer, BUFFER_SIZE, "HTTP/1.0 200 OK\r\n\r\n");
