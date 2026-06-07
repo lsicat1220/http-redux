@@ -40,9 +40,10 @@ int main() {
 		fwrite(tests[i]->target->start, 1, tests[i]->target->len, stdout);
 		printf("\n");
 
-		int num_slices = SplitSlice(tests[i]->target, tests[i]->outputs, tests[i]->num_sections, tests[i]->delimiter->start, tests[i]->delimiter->len);
-		printf("Number of sections: %d\n", num_slices);	
-		for (int j = 0; j < num_slices; j++) {
+		int occurrences = SplitSlice(tests[i]->target, tests[i]->outputs, tests[i]->num_sections, tests[i]->delimiter->start, tests[i]->delimiter->len);
+		printf("Number of sections: %d\n", tests[i]->num_sections);	
+		printf("Occurrences: %d\n", occurrences);
+		for (int j = 0; j < tests[i]->num_sections; j++) {
 			fwrite(tests[i]->outputs[j].start, 1, tests[i]->outputs[j].len, stdout);
 			printf("\n");
 		}
