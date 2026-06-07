@@ -5,7 +5,7 @@
 // Other than the order of parameters, the functionality should be identical.
 void* TheMemmem(const void* needle, const void* haystack, size_t needlelen, size_t haystacklen) {
 	// Error handling
-	if (haystacklen == 0 || needlelen == 0) {
+	if (haystacklen <= 0 || needlelen <= 0) {
 		return NULL;
 	} else if (needlelen > haystacklen) {
 		return NULL;
