@@ -11,7 +11,7 @@ void InitSlice(Slice* new_slice, char* input) {
 
 int TokenizeSlice(bufState* buf_state, Slice* slice, const char* delim, const int delim_len) {
 	char* start = buf_state->buffer + buf_state->unprocessed_offset;
-	int max_len = buf_state->capacity - buf_state->unprocessed_offset;
+	int max_len = buf_state->used_bytes - buf_state->unprocessed_offset;
 	char* slice_end = TheMemmem(delim, start, delim_len, max_len);
 	if (!slice_end) {
 		fprintf(stderr, "ERROR: No delimiter found when creating slice\n");
