@@ -1,4 +1,5 @@
 #ifndef PARSING_H
+#define PARSING_H
 #include "../include/map.h"
 #include "../include/slice.h"
 
