@@ -29,3 +29,15 @@ void* TheMemmem(const void* needle, const void* haystack, size_t needlelen, size
 	}
 	return ret;
 }
+
+int GetFileSize(FILE * file) {
+	if (fseek(file, 0, SEEK_END) != 0) {
+		return -1;
+	}
+	int size = ftell(file);
+	if (fseek(file, 0, SEEK_CUR) != 0) {
+		return -1;
+	} else {
+		return size;
+	}
+}
