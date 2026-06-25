@@ -33,6 +33,12 @@ int RespondGet(RequestLine* req, MapState* map) {
 
 int GetMimeType(char* path, int size) {
 	char* extension = memchr(path, '.', size);
+	// Handling case of the period being at the end of the string
+	if (extension - path == 12 - 1 ) {
+		extension = NULL;
+	} else {
+		extension += 1;
+	}
 	// By now the path should have already been verified, so if no period is found there should still be a file
 	if (extension == NULL) {
 		return TXT;
