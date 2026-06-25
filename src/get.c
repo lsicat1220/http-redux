@@ -30,4 +30,38 @@ int RespondGet(RequestLine* req, MapState* map) {
 	}	
 	FILE* file = fopen(path, "r");
 	int size = GetFileSize(file);
+
+int GetMimeType(char* path, int size) {
+	char* extension = memchr(path, '.', size);
+	// By now the path should have already been verified, so if no period is found there should still be a file
+	if (extension == NULL) {
+		return TXT;
+	}
+	int length = size - (extension - path);
+	switch (length) {
+		case 2:
+			if (!(memcmp(extension, "js", 2))) {
+				return JS;
+			}
+		case 3:
+			if (!(memcmp(extension, "css", 3))) {
+				return CSS;
+			} else if (!(memcmp(extension, "txt", 3))) {
+				return TXT;
+			} else if (!(memcmp(extension, "ico", 3))) {
+				return ICO;
+			} else if (!(memcmp(extension, "png", 3))) {
+				return PNG;
+			} else if (!(memcmp(extension, "jpg", 3))) {
+				return JPG;
+			} 			
+			break;
+		case 4:
+			if (!(memcmp(extension, "html", 4))) {
+				return HTML;
+			} else if (!(memcmp(extension, "json", 4))) {
+				return JSON;
+			}
+	}	
+	return UNSUPPORTED;
 }
