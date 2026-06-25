@@ -5,6 +5,20 @@
 #include "../include/map.h"
 #include "../include/utils.h"
 
+#include "../include/defs.h"
+
+enum contentType {
+	HTML,
+	CSS,
+	JS,
+	TXT,
+	JSON,
+	ICO,
+	PNG,
+	JPG,
+	UNSUPPORTED,
+};
+
 int RespondGet(RequestLine* req, MapState* map) {
 	char path[128];
 	char response[8192];

@@ -3,16 +3,6 @@
 #include "../include/map.h"
 #include "../include/slice.h"
 
-enum contentType {
-	HTML,
-	CSS,
-	JS,
-	TXT,
-	JSON,
-	ICO,
-	UNSUPPORTED,
-};
-
 enum methods {
 	GET,
 	POST,
