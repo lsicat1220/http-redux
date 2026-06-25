@@ -4,11 +4,6 @@
 #include "../include/map.h"
 #include "../include/parsing.h"
 
-enum send_type {
-	CONTENT_LENGTH,
-	CHUNKED_ENCODING
-};
-
 int CleanPath(char* file);
 
 int PickSendType(char* file);
