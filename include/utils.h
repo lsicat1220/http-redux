@@ -6,6 +6,6 @@
 
 void* TheMemmem(const void* needle, const void* haystack, size_t needlelen, size_t haystacklen);
 
-int GetFileSize(FILE* file);
+long GetFileSize(FILE* file);
 
 #endif
