@@ -66,9 +66,7 @@ int ParseRequestLine(RequestLine* req, Slice* line) {
 		return -1;
 	}
 	req->method = ParseMethod(&components[0]);
-	if (SliceToStr(&components[1], req->path, 128) != 0) {
-		return -1;
-	}	
+	req->path = components[1];
 	int version = ParseVersion(&components[2]);
 	if (version < 0) {
 		return -1;
