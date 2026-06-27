@@ -5,13 +5,10 @@
 #include <stdio.h>
 
 int ParseHeaders(bufState* buf, MapState* map) {
-	Slice currSlice = {
-		.start = buf->buffer + buf->unprocessed_offset,
-		.len = buf->used_bytes - buf->unprocessed_offset
-	};
+	Slice currSlice;
 	Slice segments[2];
-	int status;
-	while ((status = TokenizeSlice(buf, &currSlice, "\r\n", 2)) < 2) {
+	while (buf->unprocessed_offset < buf->used_bytes) {
+		TokenizeSlice(buf, &currSlice, "\r\n", 2);
 		if (currSlice.len == 0) {
 			break;
 		}
