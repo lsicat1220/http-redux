@@ -13,17 +13,20 @@ int TokenizeSlice(bufState* buf_state, Slice* slice, const char* delim, const in
 	char* start = buf_state->buffer + buf_state->unprocessed_offset;
 	int max_len = buf_state->used_bytes - buf_state->unprocessed_offset;
 	char* slice_end = TheMemmem(delim, start, delim_len, max_len);
-	if (!slice_end) {
-		if (buf_state->unprocessed_offset > buf_state->used_bytes) {
-			fprintf(stderr, "ERROR: No delimiter found when creating slice\n");
-			return -1;
-		}
-		return 1; 
-	}
-	int slice_len = slice_end - start;
+	int next_offset;
 	slice->start = start;
-	slice->len = slice_len;
-	buf_state->unprocessed_offset += slice_len + delim_len;
+	if (slice_end == NULL) {
+		slice->len = 0;
+		next_offset = buf_state->unprocessed_offset;
+	} else {
+		slice->len = slice_end - start;
+		next_offset = buf_state->unprocessed_offset + slice->len + delim_len;
+	}
+	if (next_offset < buf_state->used_bytes) {
+		buf_state->unprocessed_offset = next_offset;
+	} else {
+		buf_state->unprocessed_offset = buf_state->used_bytes;
+	}
 	return 0;
 }
 int SplitSlice(Slice* input, Slice* outputs, int num_outputs, char* delim, size_t delim_len) {
