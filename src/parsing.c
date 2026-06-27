@@ -36,7 +36,7 @@ int ParseMethod(Slice* method) {
 			break;
 	}
 	fprintf(stderr, "NONFATAL ERROR: Invalid or unsupported method\n");
-	return UNSUPPORTED;
+	return -1;
 }
 
 int ParseVersion(Slice* version) {
