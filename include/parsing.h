@@ -11,7 +11,7 @@ enum methods {
 typedef struct {
 	int method;
 	int version;
-	char path[128];
+	Slice path;
 } RequestLine;
 
 
