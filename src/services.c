@@ -44,8 +44,5 @@ void HandleConnection(int clientSocket) {
 	write(clientSocket, responseBuffer, 19);
 	printf("\n\n----- CONNECTION CLOSED -----\n\n");
 	close(clientSocket);
-	snprintf(responseBuffer, BUFFER_SIZE, "HTTP/1.0 200 OK\r\n\r\n");
-	write(clientSocket, responseBuffer, 19);
-	close(clientSocket);
 }
 
