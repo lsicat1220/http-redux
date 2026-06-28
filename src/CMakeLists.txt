@@ -5,6 +5,7 @@ add_library(core_logic STATIC
 	./map.c
 	./utils.c
 	./parsing.c
+	./get.c
 )
 
 target_include_directories(core_logic PUBLIC ../include)
