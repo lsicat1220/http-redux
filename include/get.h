@@ -3,11 +3,12 @@
 
 #include "../include/map.h"
 #include "../include/parsing.h"
+#include <stdio.h>
 
-int CleanPath(char* file);
+int CleanPath(char* file, size_t max_len);
 
-int PickSendType(char* file);
+void WriteContent(int socket, FILE* file, long size, char* buffer, int buf_size); 
 
-int RespondGet(RequestLine* req, MapState* map);
+int RespondGet(RequestLine* req, MapState* map, int socket);
 
 #endif
