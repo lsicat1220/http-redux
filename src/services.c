@@ -5,6 +5,7 @@
 #include "../include/slice.h"
 #include "../include/map.h"
 #include "../include/parsing.h"
+#include "../include/get.h"
 #define BUFFER_SIZE 8192
 
 void HandleConnection(int clientSocket) {
@@ -38,10 +39,9 @@ void HandleConnection(int clientSocket) {
 		if (ParseHeaders(&buffer_state, &map)) {
 			break;
 		}
+		RespondGet(&req, &map, clientSocket);
 		keepAlive = 0;
 	}
-	snprintf(responseBuffer, BUFFER_SIZE, "HTTP/1.0 200 OK\r\n\r\n");
-	write(clientSocket, responseBuffer, 19);
 	printf("\n\n----- CONNECTION CLOSED -----\n\n");
 	close(clientSocket);
 }
